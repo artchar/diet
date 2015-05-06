@@ -19,7 +19,8 @@ from dietfit.views import *
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^register/', account_creation),
+    url(r'^create_account/', account_creation),
+    url(r'^register/', register),
     url(r'^$', homepage)
 
 ]

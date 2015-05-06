@@ -1,6 +1,8 @@
-from django import forms
+from django.forms import ModelForm
+from dietfit.models import UserProfile
 
-class RegistrationForm(forms.Form):
-	username = forms.CharField(label='username', max_length=10)
-	email = forms.EmailField()
-	password = forms.CharField(label='password')
+class RegistrationForm(ModelForm):
+	class Meta:
+		model = UserProfile
+		fields = ['user', 'age', 'gender', 'height_ft', 'height_inch', 'weight']
+		

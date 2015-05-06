@@ -5,23 +5,48 @@
 		<title>Account register</title>
 	</head>
 	<body>
-		<h1>Register</h1>
 		<div class="container">
-		<form role="form">
-			  <div class="form-group">
-			    <label for="email">Email address:</label>
-			    <input type="email" class="form-control" id="email">
-			  </div>
-			  <div class="form-group">
-			    <label for="username">Username:</label>
-			    <input class="form-control" id="username">
-			  </div>
-			  <div class="form-group">
-			    <label for="pwd">Password:</label>
-			    <input type="password" class="form-control" id="pwd">
-			  </div>
-			  <button type="submit" class="btn btn-default btn-primary">Register</button>
-		</form>
+			<h1>Register</h1>
+			<form action="/register/" method="post">
+					{% csrf_token %}
+				  <div class="form-group">
+				  {% csrf_token %}
+				    <label for="email">Email address:</label>
+				    <input type="email" class="form-control" id="email">
+				  </div>
+				  <div class="form-group">
+				    <label for="username">Username:</label>
+				    <input class="form-control" id="user">
+				  </div>
+				  <div class="form-group">
+				    <label for="pwd">Password:</label>
+				    <input type="password" class="form-control" id="password">
+				  </div>
+				  <div class="form-group">
+				    <label for="gender">Gender</label>
+				    <select class="form-control" id="gender">
+				    	<option>M</option>
+				    	<option>F</option>
+				    </select>
+				  </div>
+				  <div class="form-group">
+				    <label for="height_ft">Height:</label>
+				    	<div class="input-group">
+				    		<input type="number" class="form-control" id="height_ft" min="4" max="7" maxlength="1">
+				    		<span class="input-group-addon">feet</span>
+				    		<input type="number" class="form-control" id="height_inch" min="0" max="11" maxlength="2">
+				    		<span class="input-group-addon">inch</span>
+				    	</div>
+				  </div>
+				  <div class="form-group">
+				    <label for="weight">Weight:</label>
+				    	<div class="input-group">
+				    		<input type="number" class="form-control" id="weight" min="80" max="999">
+				    		<span class="input-group-addon">lbs</span>
+				    	</div>
+				  </div>
+				  <button type="submit" class="btn btn-default btn-primary">Register</button>
+			</form>
 		</div>
 	</body>
 </html>
