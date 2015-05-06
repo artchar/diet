@@ -33,7 +33,6 @@ class UserProfile(models.Model):
 	gender = models.CharField(max_length=1, choices = GENDER_CHOICES, default='M')
 	height_ft = models.IntegerField(validators=[validate_height_ft], default=5)
 	height_inch = models.IntegerField(validators=[validate_height_inch], default=9)
-
 	weight = models.IntegerField(validators=[validate_weight], default=150)
 
 

@@ -21,6 +21,7 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^create_account/', account_creation),
     url(r'^register/', register),
+    url(r'^register_success/', register_success),
     url(r'^$', homepage)
 
 ]

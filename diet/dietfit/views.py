@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import *
 from django.template import RequestContext, loader
 
 from django.http import *
@@ -8,7 +8,7 @@ from dietfit.forms import *
 def account_creation(request):
 	template = loader.get_template('account_creation.html')
 	output = template.render(request)
-	return HttpResponse(output)
+	return render_to_response("account_creation.html", context_instance=RequestContext(request))
 
 def homepage(request):
 	template = loader.get_template('index.html')
@@ -17,9 +17,16 @@ def homepage(request):
 
 def register(request):
 	if request.method == 'POST':
-		form = RegistrationForm(request.POST)
-		if form.is_valid():
-			return render('/', {'form': form}, context_instance=RequestContext(request))
+		userprofileform = RegistrationForm(request.POST)
+		baseuserform = UserForm(request.POST)
+		if userprofileform.is_valid() and baseuserform.is_valid():
+			useracc = User.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'])
+			userprofile = UserProfile.objects.create(user=useracc, age=request.POST['age'], gender=request.POST['gender'], height_ft=request.POST['height_ft'], height_inch=request.POST['height_inch'], weight=request.POST['weight'])
+			userprofile.save()
+		return HttpResponseRedirect('/register_success')
 	else:
-		return render('/', {'form': form}, context_instance=RequestContext(request))
+		return HttpResponseRedirect('/')
+
+def register_success(request):
+		return render_to_response("register_success.html")
 
