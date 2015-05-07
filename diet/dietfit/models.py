@@ -38,6 +38,7 @@ class UserProfile(models.Model):
 	height_ft = models.IntegerField(validators=[validate_height_ft], default=5)
 	height_inch = models.IntegerField(validators=[validate_height_inch], default=9)
 	weight = models.IntegerField(validators=[validate_weight], default=150)
+	calorie_goal = models.IntegerField(validators=[validate_positive], default=1500)
 
 
 class Food(models.Model):

@@ -5,6 +5,22 @@ from django.http import *
 from dietfit.forms import *
 
 
+class calorie_calculate:
+	def __init__(self, gender=None):
+		if gender:
+			self.calculate = gender
+	def calculate(self):
+		return 95
+
+def male_calculate(height_ft, height_inch, weight, age):
+	combined_height = int(height_ft)*12 + int(height_inch)
+	return int(66.47 +(13.75*(int(weight)/2.2)) + (5*(combined_height * 2.54)) - (6.75 * int(age)))
+
+def female_calculate(height_ft, height_inch, weight, age):
+	combined_height = int(height_ft)*12 + int(height_inch)
+	return int(665.09 + (9.56*(int(weight)/2.2)) + (1.84*(combined_height * 2.54)) - (4.67 * int(age)))
+
+
 def account_creation(request):
 	return render_to_response("account_creation.html", context_instance=RequestContext(request))
 
@@ -16,8 +32,21 @@ def register(request):
 		userprofileform = RegistrationForm(request.POST)
 		baseuserform = UserForm(request.POST)
 		if userprofileform.is_valid() and baseuserform.is_valid():
+			gender = request.POST['gender']
+			height_ft = request.POST['height_ft']
+			height_inch = request.POST['height_inch']
+			age = request.POST['age']
+			weight = request.POST['weight']
+
+			if gender == 'M':
+				caloriecalculator = calorie_calculate(male_calculate(height_ft, height_inch, weight, age))
+				calories = caloriecalculator.calculate
+			else:
+				caloriecalculator = calorie_calculate(female_calculate(height_ft, height_inch, weight, age))
+				calories = caloriecalculator.calculate
+
 			useracc = User.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'])
-			userprofile = UserProfile.objects.create(user=useracc, age=request.POST['age'], gender=request.POST['gender'], height_ft=request.POST['height_ft'], height_inch=request.POST['height_inch'], weight=request.POST['weight'])
+			userprofile = UserProfile.objects.create(calorie_goal=calories, user=useracc, age=request.POST['age'], gender=request.POST['gender'], height_ft=request.POST['height_ft'], height_inch=request.POST['height_inch'], weight=request.POST['weight'])
 			userprofile.save()
 		return HttpResponseRedirect('/register_success')
 	else:
