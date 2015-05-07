@@ -41,10 +41,14 @@ class UserProfile(models.Model):
 
 
 class Food(models.Model):
+	name = models.CharField(max_length = 30, default="food")
 	calories = models.IntegerField(validators=[validate_positive])
 	fat = models.IntegerField(validators=[validate_positive])
 	carbs = models.IntegerField(validators=[validate_positive])
 	protein = models.IntegerField(validators=[validate_positive])
+
+	def __str__(self):
+		return self.name
 
 class MealPlan(models.Model):
 	foods = models.ManyToManyField(Food)
