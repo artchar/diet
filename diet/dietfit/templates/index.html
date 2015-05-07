@@ -8,14 +8,15 @@
 		<br><br>
 		<div class="container">
 		<h1>DIET N FIT</h1>
-		<form role="form">
+		<form action="/login/" method="post">
+		{% csrf_token %}
 			  <div class="form-group">
 			    <label for="username">Username:</label>
-			    <input class="form-control" id="username">
+			    <input class="form-control" id="id_username" name="username">
 			  </div>
 			  <div class="form-group">
 			    <label for="pwd">Password:</label>
-			    <input type="password" class="form-control" id="pwd">
+			    <input type="password" class="form-control" id="id_password" name="password">
 			  </div>
 			  <button type="submit" class="btn btn-default btn-success">Login</button>
 			  <a type="button" href="/create_account" class="btn btn-default btn-primary">Register</a>

@@ -1,19 +1,15 @@
 from django.shortcuts import *
 from django.template import RequestContext, loader
-
+from django.contrib.auth import authenticate, login
 from django.http import *
 from dietfit.forms import *
 
 
 def account_creation(request):
-	template = loader.get_template('account_creation.html')
-	output = template.render(request)
 	return render_to_response("account_creation.html", context_instance=RequestContext(request))
 
-def homepage(request):
-	template = loader.get_template('index.html')
-	output = template.render()
-	return HttpResponse(output)
+def index(request):
+	return render_to_response("index.html", context_instance=RequestContext(request))
 
 def register(request):
 	if request.method == 'POST':
@@ -29,4 +25,26 @@ def register(request):
 
 def register_success(request):
 		return render_to_response("register_success.html")
+
+def loginuser(request):
+	if request.method == 'POST':
+		loginform = LoginForm(request.POST)
+		if loginform.is_valid():
+			user = authenticate(username=request.POST['username'], password=request.POST['password'])
+			if user is not None:
+				if user.is_active:
+					login(request, user)
+					return render_to_response("/home")
+				else:
+					return HttpResponseRedirect("/")
+			else:
+				return HttpResponseRedirect("/")
+		else:
+			return HttpResponse("wtf")
+	else:
+		return HttpResponse("invalid")
+
+def home(request):
+	return render_to_response("home.html")
+
 
