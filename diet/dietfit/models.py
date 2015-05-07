@@ -22,6 +22,10 @@ def validate_height_inch(inch):
 	if inch < 0 or inch > 12:
 		raise ValidationError("Invalid height inch")
 
+def validate_positive(value):
+	if value < 1:
+		raise ValidationError("Invalid value")
+
 
 class UserProfile(models.Model):
 	GENDER_CHOICES = (
@@ -35,5 +39,14 @@ class UserProfile(models.Model):
 	height_inch = models.IntegerField(validators=[validate_height_inch], default=9)
 	weight = models.IntegerField(validators=[validate_weight], default=150)
 
+
+class Food(models.Model):
+	calories = models.IntegerField(validators=[validate_positive])
+	fat = models.IntegerField(validators=[validate_positive])
+	carbs = models.IntegerField(validators=[validate_positive])
+	protein = models.IntegerField(validators=[validate_positive])
+
+class MealPlan(models.Model):
+	foods = models.ManyToManyField(Food)
 
 
