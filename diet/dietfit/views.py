@@ -1,6 +1,6 @@
 from django.shortcuts import *
 from django.template import RequestContext, loader
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.http import *
 from dietfit.forms import *
 
@@ -28,23 +28,21 @@ def register_success(request):
 
 def loginuser(request):
 	if request.method == 'POST':
-		loginform = LoginForm(request.POST)
-		if loginform.is_valid():
-			user = authenticate(username=request.POST['username'], password=request.POST['password'])
-			if user is not None:
-				if user.is_active:
-					login(request, user)
-					return render_to_response("/home")
-				else:
-					return HttpResponseRedirect("/")
+		user = authenticate(username=request.POST['username'], password=request.POST['password'])
+		if user is not None:
+			if user.is_active:
+				login(request, user)
+				return HttpResponseRedirect("/home")
 			else:
 				return HttpResponseRedirect("/")
 		else:
-			return HttpResponse("wtf")
+			return HttpResponseRedirect("/")
 	else:
 		return HttpResponse("invalid")
 
 def home(request):
-	return render_to_response("home.html")
+	return render_to_response("home.html", context_instance=RequestContext(request))
 
-
+def logout_view(request):
+	logout(request)
+	return HttpResponseRedirect("/")

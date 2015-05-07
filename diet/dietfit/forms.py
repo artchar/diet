@@ -12,8 +12,3 @@ class RegistrationForm(ModelForm):
 		model = UserProfile
 		fields = ['age', 'gender', 'height_ft', 'height_inch', 'weight']
 
-class LoginForm(ModelForm):
-	class Meta:
-		model = User
-		fields = ['username', 'password']
-

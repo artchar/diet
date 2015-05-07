@@ -71,6 +71,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'diet.wsgi.application'
 
+LOGIN_REDIRECT_URL = '/home'
+
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
