@@ -10,7 +10,7 @@ class calorie_calculate:
 		if gender:
 			self.calculate = gender
 	def calculate(self):
-		return 95
+		pass
 
 def male_calculate(height_ft, height_inch, weight, age):
 	combined_height = int(height_ft)*12 + int(height_inch)
