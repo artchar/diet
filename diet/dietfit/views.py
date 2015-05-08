@@ -98,9 +98,10 @@ def generate_view(request):
 	deficit = request.user.userprofile.deficit
 	ourfoods = Food.objects.filter(ourfood=True)
 	while deficit > 0:
-		rand = int(random.random()*len(ourfoods))
-		if deficit - ourfoods[rand].calories > -150:
-			request.user.userprofile.mealplan.foods.add(ourfoods[rand])
-			deficit = deficit - ourfoods[rand].calories
+	 	rand = int(random.random()*len(ourfoods))
+	 	if deficit - ourfoods[rand].calories > -150:
+	 		request.user.userprofile.mealplan.foods.add(ourfoods[rand])
+	 		deficit = deficit - ourfoods[rand].calories
+
 
 	return HttpResponseRedirect("/home")

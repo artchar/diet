@@ -1,7 +1,7 @@
 
 {% if user.is_authenticated %}
 <!DOCTYPE html>
-<html lang="en">
+<html id="wrap" lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -22,6 +22,22 @@
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
     <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
+
+    <style> 
+    #wrap {
+	  min-height: 100%;
+	  height: auto;
+	  /* Negative indent footer by its height */
+	  margin: 0 auto -60px;
+	  /* Pad bottom by footer height */
+	  padding: 0 0 60px;
+	}
+
+	#footer {
+		background-color: black;
+		color: white;
+	}
+	</style>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -79,15 +95,21 @@
 		      <tr>
 		        <th>Food</th>
 		        <th>Name</th>
-		        <th>Nutrition</th>
+		        <th>Calories</th>
+		        <th>Fat</th>
+		        <th>Carbs</th>
+		        <th>Protein</th>
 		      </tr>
 		    </thead>
 		    <tbody>
 		    {% for food in user.userprofile.mealplan.foods.all %}
 		      <tr>
-		        <td><center><h2>{{forloop.counter}}</h2></center></td>
-		        <td><center><h3>{{food.name}}</h3></center></td>
-		        <td><center>{{food.calories}} Calories<br>{{food.fat}}g Fat<br>{{food.carbs}}g Carbohydrates<br>{{food.protein}}g Protein</center></td>
+		        <td><center><h4>{{forloop.counter}}</h4></center></td>
+		        <td><center><h4>{{food.name}}</h4></center></td>
+		        <td><center>{{food.calories}}</center></td>
+		        <td><center>{{food.fat}}g</center></td>
+		        <td><center>{{food.carbs}}g</center></td>
+		        <td><center>{{food.protein}}g</center></td>
 		      </tr>
 		    {% endfor %}
 		    </tbody>
@@ -115,14 +137,19 @@
 		    </tbody>
 		  </table>
 	</div>
+		
 
-	<div class="container">
-		{% if user.userprofile.deficit < 0 %}
+    <footer id="footer">
+    <nav class="navbar navbar-inverse navbar-fixed-bottom">
+      <div class="container">
+        {% if user.userprofile.deficit < 0 %}
 		<h3>You have eaten <strong>{{user.userprofile.deficit}}</strong> more calories than your goal!</h3>
 		{% else %}
 		<h3>You have eaten <strong>{{user.userprofile.deficit}}</strong> less calories than your goal!</h3>
 		{% endif %}
-		
+      </div>
+      </nav>
+    </footer>
 
 
     <!-- Bootstrap core JavaScript
