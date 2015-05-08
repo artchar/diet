@@ -24,6 +24,8 @@ urlpatterns = [
     url(r'^register_success/', register_success),
     url(r'^home/', home),
     url(r'^$', 'django.contrib.auth.views.login', {'template_name': 'index.html'}),
-    url(r'^logout/', logout_view)
+    url(r'^addmeal/', addmeal),
+    url(r'^logout/', logout_view),
+    url(r'^mealadded/', mealadded_view)
 
 ]

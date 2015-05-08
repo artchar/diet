@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
+
 # Create your models here.
 
 # class Food(models.Model):
@@ -26,6 +27,42 @@ def validate_positive(value):
 	if value < 1:
 		raise ValidationError("Invalid value")
 
+class Food(models.Model):
+	name = models.CharField(max_length = 30, default="food")
+	calories = models.IntegerField(validators=[validate_positive])
+	fat = models.IntegerField(validators=[validate_positive])
+	carbs = models.IntegerField(validators=[validate_positive])
+	protein = models.IntegerField(validators=[validate_positive])
+
+	def __str__(self):
+		return self.name
+
+
+class MealPlan(models.Model):
+	foods = models.ManyToManyField(Food)
+	owner = models.CharField(max_length=14, default= "")
+
+	def __str__(self):
+		return "mealplan of " + self.owner
+
+	@property
+	def totalcals(self):
+	    return self.foods.aggregate(models.Sum('calories'))['calories__sum']
+
+	@property
+	def totalfat(self):
+	    return self.foods.aggregate(models.Sum('fat'))['fat__sum']
+
+	@property
+	def totalcarbs(self):
+	    return self.foods.aggregate(models.Sum('carbs'))['carbs__sum']
+
+	@property
+	def totalprotein(self):
+	    return self.foods.aggregate(models.Sum('protein'))['protein__sum']
+	
+
+
 
 class UserProfile(models.Model):
 	GENDER_CHOICES = (
@@ -39,19 +76,8 @@ class UserProfile(models.Model):
 	height_inch = models.IntegerField(validators=[validate_height_inch], default=9)
 	weight = models.IntegerField(validators=[validate_weight], default=150)
 	calorie_goal = models.IntegerField(validators=[validate_positive], default=1500)
+	mealplan = models.OneToOneField(MealPlan)
 
 
-class Food(models.Model):
-	name = models.CharField(max_length = 30, default="food")
-	calories = models.IntegerField(validators=[validate_positive])
-	fat = models.IntegerField(validators=[validate_positive])
-	carbs = models.IntegerField(validators=[validate_positive])
-	protein = models.IntegerField(validators=[validate_positive])
-
-	def __str__(self):
-		return self.name
-
-class MealPlan(models.Model):
-	foods = models.ManyToManyField(Food)
 
 

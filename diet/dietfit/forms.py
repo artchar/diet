@@ -1,6 +1,6 @@
 from django.forms import ModelForm
 from django.contrib.auth.models import User
-from dietfit.models import UserProfile
+from dietfit.models import UserProfile, Food
 
 class UserForm(ModelForm):
 	class Meta:
@@ -12,3 +12,7 @@ class RegistrationForm(ModelForm):
 		model = UserProfile
 		fields = ['age', 'gender', 'height_ft', 'height_inch', 'weight']
 
+class FoodForm(ModelForm):
+	class Meta:
+		model = Food
+		fields = ['name', 'calories', 'fat', 'carbs', 'protein']

@@ -2,7 +2,9 @@ from django.shortcuts import *
 from django.template import RequestContext, loader
 from django.contrib.auth import authenticate, login, logout
 from django.http import *
+from django.db.models import Sum
 from dietfit.forms import *
+from dietfit.models import *
 
 
 class calorie_calculate:
@@ -46,7 +48,9 @@ def register(request):
 				calories = caloriecalculator.calculate
 
 			useracc = User.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'])
-			userprofile = UserProfile.objects.create(calorie_goal=calories, user=useracc, age=request.POST['age'], gender=request.POST['gender'], height_ft=request.POST['height_ft'], height_inch=request.POST['height_inch'], weight=request.POST['weight'])
+			mealplanobj = MealPlan.objects.create(owner = request.POST['username'])
+			mealplanobj.save()
+			userprofile = UserProfile.objects.create(mealplan=mealplanobj, calorie_goal=calories, user=useracc, age=request.POST['age'], gender=request.POST['gender'], height_ft=request.POST['height_ft'], height_inch=request.POST['height_inch'], weight=request.POST['weight'])
 			userprofile.save()
 		return HttpResponseRedirect('/register_success')
 	else:
@@ -75,3 +79,17 @@ def home(request):
 def logout_view(request):
 	logout(request)
 	return HttpResponseRedirect("/")
+
+def addmeal(request):
+	return render_to_response("addmeal.html", context_instance=RequestContext(request))
+
+def mealadded_view(request):
+	if request.method == 'POST':
+		foodform = FoodForm(request.POST)
+		if foodform.is_valid():
+			newfood = Food.objects.create(name=request.POST['name'], calories=request.POST['calories'], fat=request.POST['fat'], carbs=request.POST['carbs'], protein=request.POST['protein'])
+			newfood.save()
+			request.user.userprofile.mealplan.foods.add(newfood)
+			return HttpResponseRedirect("/home")
+		else:
+			return HttpResponseRedirect("/addmeal")
