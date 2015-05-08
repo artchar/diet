@@ -24,15 +24,15 @@ def validate_height_inch(inch):
 		raise ValidationError("Invalid height inch")
 
 def validate_positive(value):
-	if value < 1:
+	if value < 0:
 		raise ValidationError("Invalid value")
 
 class Food(models.Model):
 	name = models.CharField(max_length = 30, default="food")
-	calories = models.IntegerField(validators=[validate_positive])
-	fat = models.IntegerField(validators=[validate_positive])
-	carbs = models.IntegerField(validators=[validate_positive])
-	protein = models.IntegerField(validators=[validate_positive])
+	calories = models.FloatField(validators=[validate_positive])
+	fat = models.FloatField(validators=[validate_positive])
+	carbs = models.FloatField(validators=[validate_positive])
+	protein = models.FloatField(validators=[validate_positive])
 	ourfood = models.BooleanField(default=False)
 
 	def __str__(self):
