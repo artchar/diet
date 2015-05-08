@@ -87,7 +87,7 @@ def mealadded_view(request):
 	if request.method == 'POST':
 		foodform = FoodForm(request.POST)
 		if foodform.is_valid():
-			newfood = Food.objects.create(name=request.POST['name'], calories=request.POST['calories'], fat=request.POST['fat'], carbs=request.POST['carbs'], protein=request.POST['protein'])
+			newfood = Food.objects.create(ourfood=False, name=request.POST['name'], calories=request.POST['calories'], fat=request.POST['fat'], carbs=request.POST['carbs'], protein=request.POST['protein'])
 			newfood.save()
 			request.user.userprofile.mealplan.foods.add(newfood)
 			return HttpResponseRedirect("/home")

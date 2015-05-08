@@ -33,9 +33,11 @@ class Food(models.Model):
 	fat = models.IntegerField(validators=[validate_positive])
 	carbs = models.IntegerField(validators=[validate_positive])
 	protein = models.IntegerField(validators=[validate_positive])
+	ourfood = models.BooleanField(default=False)
 
 	def __str__(self):
 		return self.name
+
 
 
 class MealPlan(models.Model):
@@ -77,6 +79,10 @@ class UserProfile(models.Model):
 	weight = models.IntegerField(validators=[validate_weight], default=150)
 	calorie_goal = models.IntegerField(validators=[validate_positive], default=1500)
 	mealplan = models.OneToOneField(MealPlan)
+
+	@property
+	def deficit(self):
+		return calorie_goal - self.mealplan.totalcals
 
 
 
