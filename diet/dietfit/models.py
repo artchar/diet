@@ -56,15 +56,24 @@ class MealPlan(models.Model):
 
 	@property
 	def totalfat(self):
-	    return self.foods.aggregate(models.Sum('fat'))['fat__sum']
+	    sum = self.foods.aggregate(models.Sum('fat'))['fat__sum']
+	    if sum == None:
+	    	return 0
+	    return sum
 
 	@property
 	def totalcarbs(self):
-	    return self.foods.aggregate(models.Sum('carbs'))['carbs__sum']
+	    sum = self.foods.aggregate(models.Sum('carbs'))['carbs__sum']
+	    if sum == None:
+	    	return 0
+	    return sum
 
 	@property
 	def totalprotein(self):
-	    return self.foods.aggregate(models.Sum('protein'))['protein__sum']
+	    sum = self.foods.aggregate(models.Sum('protein'))['protein__sum']
+	    if sum == None:
+	    	return 0
+	    return sum
 	
 
 
