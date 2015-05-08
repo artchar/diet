@@ -66,7 +66,7 @@
 
     	<div class="btn-group" role="group" aria-label="...">
 		  <a href="/addmeal" type="button" class="btn btn-lg btn-primary">Add a meal</a>
-		  <button type="button" class="btn btn-lg btn-primary">Generate meals</button>
+		  <a href="/generate" type="button" class="btn btn-lg btn-primary">Generate meals</a>
 		  <button type="button" class="btn btn-lg btn-danger">Reset</button>
 		</div>
 
@@ -86,8 +86,8 @@
 		    {% for food in user.userprofile.mealplan.foods.all %}
 		      <tr>
 		        <td><center><h2>{{forloop.counter}}</h2></center></td>
-		        <td>{{food.name}}</td>
-		        <td>{{food.calories}} Calories<br>{{food.fat}}g Fat<br>{{food.carbs}}g Carbohydrates<br>{{food.protein}}g Protein</td>
+		        <td><center><h3>{{food.name}}</h3></center></td>
+		        <td><center>{{food.calories}} Calories<br>{{food.fat}}g Fat<br>{{food.carbs}}g Carbohydrates<br>{{food.protein}}g Protein</center></td>
 		      </tr>
 		    {% endfor %}
 		    </tbody>
@@ -107,16 +107,22 @@
 		    </thead>
 		    <tbody>
 		      <tr>
-		      	{% with caloriestotal=500 %}
 		        <td><center><h2>{{user.userprofile.mealplan.totalcals}}</h2></center></td>
 		        <td><center><h2>{{user.userprofile.mealplan.totalfat}}</h2></center></td>
 		        <td><center><h2>{{user.userprofile.mealplan.totalcarbs}}</h2></center></td>
 		        <td><center><h2>{{user.userprofile.mealplan.totalprotein}}</h2></center></td>
-		        {% endwith %}
 		      </tr>
 		    </tbody>
 		  </table>
 	</div>
+
+	<div class="container">
+		{% if user.userprofile.deficit < 0 %}
+		<h3>You have eaten <strong>{{user.userprofile.deficit}}</strong> more calories than your goal!</h3>
+		{% else %}
+		<h3>You have eaten <strong>{{user.userprofile.deficit}}</strong> less calories than your goal!</h3>
+		{% endif %}
+		
 
 
     <!-- Bootstrap core JavaScript

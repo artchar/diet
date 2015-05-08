@@ -41,7 +41,7 @@ class Food(models.Model):
 
 
 class MealPlan(models.Model):
-	foods = models.ManyToManyField(Food)
+	foods = models.ManyToManyField(Food, unique=False)
 	owner = models.CharField(max_length=14, default= "")
 
 	def __str__(self):
@@ -49,7 +49,10 @@ class MealPlan(models.Model):
 
 	@property
 	def totalcals(self):
-	    return self.foods.aggregate(models.Sum('calories'))['calories__sum']
+	    sum = self.foods.aggregate(models.Sum('calories'))['calories__sum']
+	    if sum == None:
+	    	return 0
+	    return sum
 
 	@property
 	def totalfat(self):
@@ -82,7 +85,7 @@ class UserProfile(models.Model):
 
 	@property
 	def deficit(self):
-		return calorie_goal - self.mealplan.totalcals
+		return self.calorie_goal - self.mealplan.totalcals
 
 
 

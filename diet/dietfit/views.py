@@ -5,7 +5,7 @@ from django.http import *
 from django.db.models import Sum
 from dietfit.forms import *
 from dietfit.models import *
-
+import random
 
 class calorie_calculate:
 	def __init__(self, gender=None):
@@ -93,3 +93,14 @@ def mealadded_view(request):
 			return HttpResponseRedirect("/home")
 		else:
 			return HttpResponseRedirect("/addmeal")
+
+def generate_view(request):
+	deficit = request.user.userprofile.deficit
+	ourfoods = Food.objects.filter(ourfood=True)
+	while deficit > 0:
+		rand = int(random.random()*len(ourfoods))
+		if deficit - ourfoods[rand].calories > -150:
+			request.user.userprofile.mealplan.foods.add(ourfoods[rand])
+			deficit = deficit - ourfoods[rand].calories
+
+	return HttpResponseRedirect("/home")
