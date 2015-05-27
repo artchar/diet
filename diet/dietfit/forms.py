@@ -10,7 +10,7 @@ class UserForm(ModelForm):
 class RegistrationForm(ModelForm):
 	class Meta:
 		model = UserProfile
-		fields = ['age', 'gender', 'height_ft', 'height_inch', 'weight']
+		fields = ['age', 'gender', 'height_ft', 'height_inch', 'weight', 'loss_goal']
 
 class FoodForm(ModelForm):
 	class Meta:

@@ -39,6 +39,7 @@ def register(request):
 			height_inch = request.POST['height_inch']
 			age = request.POST['age']
 			weight = request.POST['weight']
+			loss_goal = request.POST['loss_goal']
 
 			if gender == 'M':
 				caloriecalculator = calorie_calculate(male_calculate(height_ft, height_inch, weight, age))
@@ -47,10 +48,15 @@ def register(request):
 				caloriecalculator = calorie_calculate(female_calculate(height_ft, height_inch, weight, age))
 				calories = caloriecalculator.calculate
 
+			if loss_goal == '1':
+				calories = calories - 250
+			elif loss_goal == '2':
+				calories = calories- 500
+
 			useracc = User.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'])
 			mealplanobj = MealPlan.objects.create(owner = request.POST['username'])
 			mealplanobj.save()
-			userprofile = UserProfile.objects.create(mealplan=mealplanobj, calorie_goal=calories, user=useracc, age=request.POST['age'], gender=request.POST['gender'], height_ft=request.POST['height_ft'], height_inch=request.POST['height_inch'], weight=request.POST['weight'])
+			userprofile = UserProfile.objects.create(mealplan=mealplanobj, calorie_goal=calories, user=useracc, age=request.POST['age'], gender=request.POST['gender'], height_ft=request.POST['height_ft'], height_inch=request.POST['height_inch'], weight=request.POST['weight'], loss_goal=request.POST['loss_goal'])
 			userprofile.save()
 		return HttpResponseRedirect('/register_success')
 	else:

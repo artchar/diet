@@ -91,6 +91,7 @@ class UserProfile(models.Model):
 	weight = models.IntegerField(validators=[validate_weight], default=150)
 	calorie_goal = models.IntegerField(validators=[validate_positive], default=1500)
 	mealplan = models.OneToOneField(MealPlan)
+	loss_goal = models.IntegerField(validators=[validate_positive], default=0)
 
 	@property
 	def deficit(self):

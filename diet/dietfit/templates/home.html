@@ -1,3 +1,4 @@
+{% load mathfilters %}
 
 {% if user.is_authenticated %}
 <!DOCTYPE html>
@@ -61,8 +62,7 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#">My Food</a></li>
-            <li><a href="#about">My Workouts</a></li>
+            <li class="active"><a href="#">My Plan</a></li>
             <li><a href="#about">My Account</a></li>
             <li><a href="/logout">Logout</a></li>
           </ul>
@@ -78,7 +78,7 @@
     	<h1>Welcome {{user.username}}</h1>
     	<h4>Current Stats: <span class="label label-success">{{user.userprofile.gender}} {{user.userprofile.height_ft}}'{{user.userprofile.height_inch}}"  {{user.userprofile.weight}} lbs</span></h4>
 
-    	<h3>You should be aiming for <b>{{user.userprofile.calorie_goal}}</b> calories.</h3>
+    	<h3>You should be aiming for <b>{{user.userprofile.calorie_goal}}</b> calories to lose {{user.userprofile.loss_goal}} lbs a week.</h3>
 
     	<div class="btn-group" role="group" aria-label="...">
 		  <a href="/addmeal" type="button" class="btn btn-lg btn-primary">Add a meal</a>
@@ -104,8 +104,8 @@
 		    <tbody>
 		    {% for food in user.userprofile.mealplan.foods.all %}
 		      <tr>
-		        <td><center><h4>{{forloop.counter}}</h4></center></td>
-		        <td><center><h4>{{food.name}}</h4></center></td>
+		        <td><center>{{forloop.counter}}</center></td>
+		        <td><center>{{food.name}}</center></td>
 		        <td><center>{{food.calories}}</center></td>
 		        <td><center>{{food.fat}}g</center></td>
 		        <td><center>{{food.carbs}}g</center></td>
@@ -143,7 +143,7 @@
     <nav class="navbar navbar-inverse navbar-fixed-bottom">
       <div class="container">
         {% if user.userprofile.deficit < 0 %}
-		<h3>You have eaten <strong>{{user.userprofile.deficit}}</strong> more calories than your goal!</h3>
+		<h3>You have eaten <strong>{{user.userprofile.deficit|abs}}</strong> more calories than your goal!</h3>
 		{% else %}
 		<h3>You have eaten <strong>{{user.userprofile.deficit}}</strong> less calories than your goal!</h3>
 		{% endif %}
