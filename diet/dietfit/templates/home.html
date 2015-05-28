@@ -115,7 +115,8 @@
               // prevent autocomplete from updating the textbox
               event.preventDefault();
               // add to field
-              $("#servingunit").after().remove();
+
+              $("#servingunitdisplay").text("");
               $("#foodname").val(ui.item.label);
               $("#foodservingsize").val(ui.item.serving_size_qty);
               $("#foodaddcals").val(ui.item.calories);
@@ -123,7 +124,7 @@
               $("#foodaddcarbs").val(ui.item.carbs);
               $("#foodaddprotein").val(ui.item.protein);
               $("#servingunit").val(ui.item.serving_size_unit+'(s)');
-              $("#servingunit").after(ui.item.serving_size_unit);
+              $("#servingunitdisplay").text(ui.item.serving_size_unit);
 
               window.orig_serving = parseFloat($("#foodservingsize").val());
               window.orig_calories = parseFloat($("#foodaddcals").val());
@@ -235,7 +236,7 @@
           <tr>
             <!--<td>1</td>-->
             <td><input name="name" id="foodname" type="text"></td>
-            <td><input name="servingsize" id="foodservingsize" type="number" step="any" min="0.1"><input name="servingunit"id="servingunit" type=hidden></td>
+            <td><input name="servingsize" id="foodservingsize" type="number" step="any" min="0.1"><input name="servingunit"id="servingunit" type=hidden /><span id="servingunitdisplay"></span></td>
             <td><input name="calories" id="foodaddcals" type="number" step="any" min="1"></td>
             <td><input name="fat" id="foodaddfat" type="number" step="any" min="0">g</td>
             <td><input name="carbs" id="foodaddcarbs" type="number" step="any" min="0">g</td>
