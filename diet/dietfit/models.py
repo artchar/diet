@@ -101,16 +101,14 @@ class UserExercise(models.Model):
 		return self.exercisebase.name + ' for ' + str(self.duration)
 
 
-
-	
-	
-
 class ExercisePlan(models.Model):
 	exercises = models.ManyToManyField(UserExercise, unique=False)
 	owner = models.CharField(max_length=14, default="")
 
 	def __str__(self):
 		return "exercise plan of " + self.owner
+
+
 
 
 
