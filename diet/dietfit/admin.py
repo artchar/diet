@@ -22,4 +22,16 @@ class FoodAdmin(admin.ModelAdmin):
 class MealPlanAdmin(admin.ModelAdmin):
 	pass
 
+@admin.register(ExerciseBase)
+class ExerciseBaseAdmin(admin.ModelAdmin):
+	pass
+
+@admin.register(UserExercise)
+class UserExerciseAdmin(admin.ModelAdmin):
+	pass
+
+@admin.register(ExercisePlan)
+class ExercisePlanAdmin(admin.ModelAdmin):
+	pass
+
 # Register your models here.

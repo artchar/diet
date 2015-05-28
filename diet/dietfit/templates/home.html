@@ -36,6 +36,20 @@
     color: white;
   }
 
+  .add_food {
+    margin-top:1em;
+    margin-bottom:1em;
+  }
+
+  .add_exercise {
+    margin-top:1em;
+    margin-bottom:1em;
+  }
+
+  .section-minimize {
+    cursor:pointer;
+  }
+
       .food-search {
       font-size: 2em;
       height: 2em;
@@ -63,6 +77,10 @@
 
     .foot {
       margin-top: 5px;
+    }
+
+    .btns {
+      margin-bottom:1.5em;
     }
   </style>
 
@@ -176,9 +194,28 @@
 
     <script>
     $(document).ready(function() {
+      $("#add_food").hide();
+      $("#add_exercise").hide();
+
       $("#add_food_toggle").click(function() {
-        $(".add_food").toggle();
+        $(".add_food").slideToggle("slow");
       });
+       $("#add_exercise_toggle").click(function() {
+        $(".add_exercise").slideToggle("slow");
+      });
+
+      $("#foodtoggle").click(function() {
+        $(".food-container").slideToggle("slow");
+      });
+
+      $("#foodtotaltoggle").click(function() {
+        $(".food-total-container").slideToggle("slow");
+      });
+
+      $("#exercisetoggle").click(function() {
+        $(".exercise-container").slideToggle("fast");
+      });
+
     });
 
     $(document).ready(function() {
@@ -194,6 +231,11 @@
               }
           }
           });
+
+      $("#search_exercise").change(function() {
+        $("#selectedexercise").text($("#search_exercise option:selected")[0].text);
+        $("#exerciseid").val($("#search_exercise option:selected")[0].value);
+      });
     });
     </script>
 
@@ -203,27 +245,34 @@
       <h1>Welcome {{user.username}}</h1>
       <h4>Current Stats: <span class="label label-success">{{user.userprofile.gender}} {{user.userprofile.height_ft}}'{{user.userprofile.height_inch}}"  {{user.userprofile.weight}} lbs</span></h4>
 
-      <h3>You should be aiming for <b>{{user.userprofile.calorie_goal}}</b> calories to lose {{user.userprofile.loss_goal}} lbs a week.</h3>
+      <h3>You should be aiming for <b>{{user.userprofile.calorie_goal}}</b> calories to lose {{user.userprofile.loss_goal}} lb(s) a week.</h3>
 
-      <div class="btn-group" role="group" aria-label="...">
-      <button type="button" class="btn btn-lg btn-primary" id="add_food_toggle">Add a meal</button>
-      <a href="/generate" type="button" class="btn btn-lg btn-primary">Generate meals</a>
-      <a href="/resetfood" type="button" class="btn btn-lg btn-danger">Reset</a>
-      </div>
+      
 
     </div>
 
+    <div class="container">
+      <h3>Food<span class="glyphicon glyphicon-minus section-minimize minus" id="foodtoggle" aria-hidden="true"></span></h3>     
+    </div>
+    
+    <div class="food-container">
+    <div class="container">
 
-    <br>
+        <div class="btn-group btns" role="group" aria-label="...">
+        <button type="button" class="btn btn-lg btn-primary" id="add_food_toggle">Add food</button>
+        <a href="/generate" type="button" class="btn btn-lg btn-primary">Generate food</a>
+        <a href="/resetfood" type="button" class="btn btn-lg btn-danger">Reset food</a>
+        </div>
+    </div>
 
     <div class="container add_food" id="add_food">
+
     <input class="form-control food-search" placeholder="Search for a food.." id="search_food">
       <form method="post" action="/mealadded/"> {% csrf_token %}
       <table id="foods" class="table table-bordered">
         <thead>
           <tr>
            <!-- <th>Food</th> -->
-
             <th>Name</th>
             <th>Servings</th>
             <th>Calories</th>
@@ -250,7 +299,6 @@
      </div>
 
     <div class="container">
-      <h2>Food</h2>        
       <table class="table table-bordered">
         <thead>
           <tr>
@@ -276,9 +324,15 @@
         </tbody>
       </table>
    </div>
+   </div>
 
    <div class="container">
-    <h3>Totals</h3>
+    <h3>Food Totals<span class="glyphicon glyphicon-minus section-minimize minus" id="foodtotaltoggle" aria-hidden="true"></span></h3>
+    </div>
+
+   <div class="food-total-container">
+   <div class="container">
+   
       <table class="table table-bordered">
         <thead>
           <tr>
@@ -298,15 +352,93 @@
         </tbody>
       </table>
   </div>
+  </div>
+
+  <div class="container">
+  <hr>
+  </div>
+
+  <div class="container">
+      <h3>Cardio Exercises<span class="glyphicon glyphicon-minus section-minimize minus" id="exercisetoggle" aria-hidden="true"></h3>        
+      </div>
+
+  <div class="exercise-container">
+   <div class="container">
+
+        <div class="btn-group btns" role="group" aria-label="...">
+        <button type="button" class="btn btn-lg btn-primary" id="add_exercise_toggle">Add exercise</button>
+        <a href="/resetexercise" type="button" class="btn btn-lg btn-danger">Reset exercise</a>
+        </div>
+   </div>
+    <div class="container add_exercise" id="add_exercise">
+
+    <datalist id="exercise_list">
+    </datalist>
+
+
+    <select class="form-control food-search" placeholder="Search for an exercise.." id="search_exercise">
+      {% for exercisebase in exercisebase %}
+      <option value="{{exercisebase.id}}">{{exercisebase.name}}
+      {% endfor %}
+      </option>
+    </select>
+      <form method="post" action="/exerciseadded/"> {% csrf_token %}
+      <table id="exercises" class="table table-bordered">
+        <thead>
+          <tr>
+           <!-- <th>Food</th> -->
+            <th>Name</th>
+            <th>Duration</th>           
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <!--<td>1</td>-->
+            <td><input name="exerciseid" id="exerciseid" type="hidden"><span id="selectedexercise"></span></td>
+            <td><input class="form-control" name="exerciseduration" id="exerciseduration" type="number">
+          </tr>
+          
+        </tbody>
+      </table>
+          <button type="submit" class="btn btn-success">Save</button>
+          </form>
+     </div>
+     <div class="container">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Duration</th>
+            <th>Calories burned</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for exercise in user.userprofile.exerciseplan.exercises.all %}
+          <tr>
+            <td><center>{{exercise.exercisebase.name}}</center></td>
+            <td><center>{{exercise.duration}}</center></td>
+            <td><center>{{exercise.duration|mul:exercise.exercisebase.met|mul:3.5|mul:user.userprofile.weight|div:2.2046|div:200|floatformat:"2"}}</center></td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+   </div>
+   </div>
+  </div>
+
+   <div class="container">
+    <h3> Exercises burn a total of <strong>{{user.userprofile.cals_from_exercise|floatformat:"2"}}</strong> calories. This is added to your allowed calories for the day.</h3>
+
+    </div>
     
 
     <footer id="footer">
     <nav class="navbar navbar-inverse navbar-fixed-bottom foot">
         <div class="container">
         {% if user.userprofile.deficit < 0 %}
-    <h3>You have eaten <strong>{{user.userprofile.deficit|abs}}</strong> more calories than your goal!</h3>
+    <h3>You have <strong>{{user.userprofile.deficit|abs}}</strong> more calories than your goal!</h3>
     {% else %}
-    <h3>You have eaten <strong>{{user.userprofile.deficit}}</strong> less calories than your goal!</h3>
+    <h3>You have <strong>{{user.userprofile.deficit}}</strong> less calories than your goal!</h3>
     {% endif %}
     </div>
       </nav>

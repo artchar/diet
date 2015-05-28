@@ -85,30 +85,35 @@ class MealPlan(models.Model):
 
 
 
+class ExerciseBase(models.Model):
+	name = models.CharField(max_length=40)
+	met = models.DecimalField(validators=[validate_positive], max_digits=5, decimal_places=2)
+
+	def __str__(self):
+		return self.name
+
+
+class UserExercise(models.Model):
+	exercisebase = models.ForeignKey(ExerciseBase)
+	duration = models.IntegerField(validators=[validate_positive], max_length=3)
+
+	def __str__(self):
+		return self.exercisebase.name + ' for ' + str(self.duration)
 
 
 
-
-
-# class Exercise(models.Model):
-# 	name = models.CharField(max_length=40)
-# 	calories_burned = models.DecimalField(validators=[validate_positive])
-
-# 	def __str__(self):
-# 		return self.name
-
-# class ExercisePlan(models.Model):
-# 	exercises = models.ManyToManyField(Exercise, unique=False)
-# 	owner = models.CharField(max_length=14, default="")
-
-# 	def __str__(self):
-# 		return "exercise plan of " + self.owner
-
-
-# 	@property
-# 	def totalcalsburned(self):
-# 	    sum = self.exercises.aggregate(models.Sum('calories_burned'))['calories_burned__sum']
 	
+	
+
+class ExercisePlan(models.Model):
+	exercises = models.ManyToManyField(UserExercise, unique=False)
+	owner = models.CharField(max_length=14, default="")
+
+	def __str__(self):
+		return "exercise plan of " + self.owner
+
+
+
 
 class UserProfile(models.Model):
 	GENDER_CHOICES = (
@@ -123,12 +128,23 @@ class UserProfile(models.Model):
 	weight = models.IntegerField(validators=[validate_weight], default=150)
 	calorie_goal = models.IntegerField(validators=[validate_positive], default=1500)
 	mealplan = models.OneToOneField(MealPlan)
-#	exerciseplan = models.OneToOneField(ExercisePlan)
+	exerciseplan = models.OneToOneField(ExercisePlan, null=True)
 	loss_goal = models.IntegerField(validators=[validate_positive], default=0)
+
+
+	@property
+	def cals_from_exercise(self):
+		sum = 0
+		for ex in self.exerciseplan.exercises.all():
+			calsburned = ((float(ex.exercisebase.met) * 3.5 * (self.weight/2.2046)/200)) * ex.duration
+			sum = sum + calsburned
+		return sum
+
 
 	@property
 	def deficit(self):
-		return self.calorie_goal - self.mealplan.totalcals
+		return int(self.calorie_goal - self.mealplan.totalcals + int(self.cals_from_exercise))
+
 
 
 

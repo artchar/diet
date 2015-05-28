@@ -56,7 +56,8 @@ def register(request):
 			useracc = User.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'])
 			mealplanobj = MealPlan.objects.create(owner = request.POST['username'])
 			mealplanobj.save()
-			userprofile = UserProfile.objects.create(mealplan=mealplanobj, calorie_goal=calories, user=useracc, age=request.POST['age'], gender=request.POST['gender'], height_ft=request.POST['height_ft'], height_inch=request.POST['height_inch'], weight=request.POST['weight'], loss_goal=request.POST['loss_goal'])
+			exerciseplanobj = ExercisePlan.objects.create(owner= request.POST['username'])
+			userprofile = UserProfile.objects.create(mealplan=mealplanobj, calorie_goal=calories, user=useracc, age=request.POST['age'], gender=request.POST['gender'], height_ft=request.POST['height_ft'], height_inch=request.POST['height_inch'], weight=request.POST['weight'], loss_goal=request.POST['loss_goal'], exerciseplan=exerciseplanobj)
 			userprofile.save()
 		return HttpResponseRedirect('/register_success')
 	else:
@@ -80,7 +81,7 @@ def loginuser(request):
 		return HttpResponse("invalid")
 
 def home(request):
-	return render_to_response("home.html", context_instance=RequestContext(request))
+	return render_to_response("home.html", {"exercisebase": ExerciseBase.objects.all()}, context_instance=RequestContext(request))
 
 def logout_view(request):
 	logout(request)
@@ -99,7 +100,15 @@ def mealadded_view(request):
 			request.user.userprofile.mealplan.foods.add(newfood)
 			return HttpResponseRedirect("/home")
 		else:
-			return HttpResponseRedirect("/addmeal")
+			return HttpResponseRedirect("/home")
+
+def exerciseadded_view(request):
+	base_exercise = ExerciseBase.objects.get(id=request.POST['exerciseid'])
+	new_user_exercise = UserExercise.objects.create(exercisebase=base_exercise, duration=request.POST['exerciseduration'])
+	new_user_exercise.save()
+	request.user.userprofile.exerciseplan.exercises.add(new_user_exercise)
+	return HttpResponseRedirect("/home")
+
 
 def generate_view(request):
 	deficit = request.user.userprofile.deficit

@@ -28,7 +28,8 @@ urlpatterns = [
     url(r'^logout/', logout_view),
     url(r'^mealadded/', mealadded_view),
     url(r'^generate/', generate_view),
-    url(r'^resetfood/', reset_food)
+    url(r'^resetfood/', reset_food),
+    url(r'^exerciseadded/', exerciseadded_view)
     #url(r'^resetexercise/', reset_exercise)
 
 ]
