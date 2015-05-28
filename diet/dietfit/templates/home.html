@@ -93,7 +93,7 @@
 		  <table class="table table-bordered">
 		    <thead>
 		      <tr>
-		        <th>Food</th>
+		        <th>Servings</th>
 		        <th>Name</th>
 		        <th>Calories</th>
 		        <th>Fat</th>
@@ -104,7 +104,7 @@
 		    <tbody>
 		    {% for food in user.userprofile.mealplan.foods.all %}
 		      <tr>
-		        <td><center>{{forloop.counter}}</center></td>
+		        <td><center>{{food.servingsize}}</center></td>
 		        <td><center>{{food.name}}</center></td>
 		        <td><center>{{food.calories}}</center></td>
 		        <td><center>{{food.fat}}g</center></td>

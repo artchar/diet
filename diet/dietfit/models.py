@@ -3,10 +3,6 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
 
-# Create your models here.
-
-# class Food(models.Model):
-
 def validate_weight(weight):
 	if weight < 60 or weight > 999:
 		raise ValidationError("Invalid weight")
@@ -33,12 +29,23 @@ class Food(models.Model):
 	fat = models.FloatField(validators=[validate_positive])
 	carbs = models.FloatField(validators=[validate_positive])
 	protein = models.FloatField(validators=[validate_positive])
+	servingsize = models.IntegerField(validators=[validate_positive], default=1)
 	ourfood = models.BooleanField(default=False)
 
 	def __str__(self):
 		return self.name
 
+# class Meal(models.Model):
+# 	foods = models.ManyToManyField(Food)
+# 	summ = self.foods.aggregate(models.Sum('calories'))['calories__sum']
 
+# 	@property
+# 	def totalcals(self):
+# 		sum = self.foods.aggregate(models.Sum('calories'))['calories__sum']
+# 		if sum == None:
+# 			return 0
+# 		else:
+# 			return sum
 
 class MealPlan(models.Model):
 	foods = models.ManyToManyField(Food, unique=False)
@@ -49,10 +56,11 @@ class MealPlan(models.Model):
 
 	@property
 	def totalcals(self):
-	    sum = self.foods.aggregate(models.Sum('calories'))['calories__sum']
-	    if sum == None:
-	    	return 0
-	    return sum
+		sum = self.foods.aggregate(models.Sum('calories'))['calories__sum']
+		if sum == None:
+			return 0
+		else:
+			return sum
 
 	@property
 	def totalfat(self):
@@ -75,24 +83,31 @@ class MealPlan(models.Model):
 	    	return 0
 	    return sum
 
-class Exercise(models.Model):
-	name = models.CharField(max_length=40)
-	calories_burned = models.FloatField(validators=[validate_positive])
-
-	def __str__(self):
-		return self.name
-
-class ExercisePlan(models.Model):
-	exercises = models.ManyToManyField(Exercise, unique=False)
-	owner = models.CharField(max_length=14, default="")
-
-	def __str__(self):
-		return "exercise plan of " + self.owner
 
 
-	@property
-	def totalcalsburned(self):
-	    sum = self.exercises.aggregate(models.Sum('calories_burned'))['calories_burned__sum']
+
+
+
+
+
+# class Exercise(models.Model):
+# 	name = models.CharField(max_length=40)
+# 	calories_burned = models.FloatField(validators=[validate_positive])
+
+# 	def __str__(self):
+# 		return self.name
+
+# class ExercisePlan(models.Model):
+# 	exercises = models.ManyToManyField(Exercise, unique=False)
+# 	owner = models.CharField(max_length=14, default="")
+
+# 	def __str__(self):
+# 		return "exercise plan of " + self.owner
+
+
+# 	@property
+# 	def totalcalsburned(self):
+# 	    sum = self.exercises.aggregate(models.Sum('calories_burned'))['calories_burned__sum']
 	
 
 class UserProfile(models.Model):
@@ -108,6 +123,7 @@ class UserProfile(models.Model):
 	weight = models.IntegerField(validators=[validate_weight], default=150)
 	calorie_goal = models.IntegerField(validators=[validate_positive], default=1500)
 	mealplan = models.OneToOneField(MealPlan)
+#	exerciseplan = models.OneToOneField(ExercisePlan)
 	loss_goal = models.IntegerField(validators=[validate_positive], default=0)
 
 	@property

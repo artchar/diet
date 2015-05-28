@@ -108,16 +108,18 @@ def generate_view(request):
 	 	if deficit - ourfoods[rand].calories > -150:
 	 		request.user.userprofile.mealplan.foods.add(ourfoods[rand])
 	 		deficit = deficit - ourfoods[rand].calories
-
-
 	return HttpResponseRedirect("/home")
 
 def reset_food(request):
 	request.user.userprofile.mealplan.delete()
 	mealplanobj = MealPlan.objects.create(owner = request.user.username)
 	mealplanobj.save()
-	request.user.userprofile.mealplan.add(mealplanobj)
+	request.user.userprofile.mealplan = mealplanobj
+	request.user.userprofile.save()
 	return HttpResponseRedirect("/home")
 	
-def reset_exercise(request):
-	pass
+# def reset_exercise(request):
+# 	request.user.userprofile.exerciseplan.delete()
+# 	exerciseplanobj = ExercisePlan.objects.create(owner = request.user.username)
+# 	exerciseplanobj.save()
+# 	request.user.userprofile.exerciseplan

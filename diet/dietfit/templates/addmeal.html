@@ -10,12 +10,13 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
     <title>dietfit - Add Meal</title>
 
     <!-- Bootstrap core CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
-
+    <link href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/ui-darkness/jquery-ui.min.css" rel="stylesheet">
     <!-- Custom styles for this template -->
     <link href="starter-template.css" rel="stylesheet">
 
@@ -38,6 +39,11 @@
     background-color: black;
     color: white;
   }
+
+    .food-search {
+      font-size: 2em;
+      height: 2em;
+    }
   </style>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -48,6 +54,25 @@
   </head>
 
   <body>
+
+  <script>
+  $(function() {
+    $("#search").autocomplete({
+      minLength: 3,
+      delay: 500,
+      source: function(request, response) {
+        var url = "https://api.nutritionix.com/v1_1/search/" + request.term;
+        $.getJSON(url, {
+          appKey: "15f569293b8b19abdd0cd7f91d29fbd7",
+          appId: "bc975dc3",
+          results: "0:9",
+          phrase: request.term
+        })
+      }
+    });
+  });
+
+  </script>
 
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
@@ -80,10 +105,13 @@
 
     	<h3>You should be aiming for <b>{{user.userprofile.calorie_goal}}</b> calories.</h3>
       <h2>Create a meal</h2>
-    	<div class="btn-group" role="group" aria-label="...">
-		<!--  <button type="button" onclick="addFood()" class="btn btn-lg btn-primary">Add food</button>-->
-		  <button type="button" class="btn btn-lg btn-danger">Reset</button>
-		  </div>
+
+      <div>
+        <h3>Search:</h3>
+        <input class="form-control food-search" placeholder="Search for a food.." id="search">
+
+      </div>
+
 
     </div><!-- /.container -->
     <br>
@@ -94,7 +122,9 @@
 		    <thead>
 		      <tr>
 		       <!-- <th>Food</th> -->
+
 		        <th>Name</th>
+            <th>Servings</th>
             <th>Calories</th>
 		        <th>Fat</th>
             <th>Carbs</th>
@@ -105,10 +135,11 @@
 		      <tr>
 		        <!--<td>1</td>-->
 		        <td><input name="name" type="text"></td>
-		        <td><input name="calories" type="text"></td>
-            <td><input name="fat" type="text">g</td>
-            <td><input name="carbs"type="text">g</td>
-            <td><input name="protein" type="text">g</td>
+            <td><input name="servingsize" type="number" min="1"></td>
+		        <td><input name="calories" type="number"min="1"></td>
+            <td><input name="fat" type="number"min="1">g</td>
+            <td><input name="carbs"type="number" min="1">g</td>
+            <td><input name="protein" type="number" min="1">g</td>
 		      </tr>
           
 		    </tbody>
@@ -120,7 +151,6 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="../../dist/js/bootstrap.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
