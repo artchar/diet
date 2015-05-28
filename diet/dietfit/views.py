@@ -111,3 +111,13 @@ def generate_view(request):
 
 
 	return HttpResponseRedirect("/home")
+
+def reset_food(request):
+	request.user.userprofile.mealplan.delete()
+	mealplanobj = MealPlan.objects.create(owner = request.user.username)
+	mealplanobj.save()
+	request.user.userprofile.mealplan.add(mealplanobj)
+	return HttpResponseRedirect("/home")
+	
+def reset_exercise(request):
+	pass

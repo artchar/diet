@@ -74,9 +74,26 @@ class MealPlan(models.Model):
 	    if sum == None:
 	    	return 0
 	    return sum
+
+class Exercise(models.Model):
+	name = models.CharField(max_length=40)
+	calories_burned = models.FloatField(validators=[validate_positive])
+
+	def __str__(self):
+		return self.name
+
+class ExercisePlan(models.Model):
+	exercises = models.ManyToManyField(Exercise, unique=False)
+	owner = models.CharField(max_length=14, default="")
+
+	def __str__(self):
+		return "exercise plan of " + self.owner
+
+
+	@property
+	def totalcalsburned(self):
+	    sum = self.exercises.aggregate(models.Sum('calories_burned'))['calories_burned__sum']
 	
-
-
 
 class UserProfile(models.Model):
 	GENDER_CHOICES = (

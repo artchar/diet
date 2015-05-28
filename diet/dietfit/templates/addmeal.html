@@ -1,4 +1,4 @@
-
+{% load mathfilters %}
 {% if user.is_authenticated %}
 <!DOCTYPE html>
 <html lang="en">
@@ -21,7 +21,24 @@
 
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
     <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
+
+    <style> 
+    #wrap {
+    min-height: 100%;
+    height: auto;
+    /* Negative indent footer by its height */
+    margin: 0 auto -60px;
+    /* Pad bottom by footer height */
+    padding: 0 0 60px;
+  }
+
+  #footer {
+    background-color: black;
+    color: white;
+  }
+  </style>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -129,8 +146,8 @@
 
       }
     </script>
-  </body>
-  
+
+
     <footer id="footer">
     <nav class="navbar navbar-inverse navbar-fixed-bottom">
       <div class="container">
@@ -142,6 +159,8 @@
       </div>
       </nav>
     </footer>
+  </body>
+  
 </html>
 
 {% else %}
