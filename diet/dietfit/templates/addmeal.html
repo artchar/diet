@@ -10,20 +10,13 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
     <title>dietfit - Add Meal</title>
 
     <!-- Bootstrap core CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
     <link href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/ui-darkness/jquery-ui.min.css" rel="stylesheet">
-    <!-- Custom styles for this template -->
-    <link href="starter-template.css" rel="stylesheet">
-
-    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-
-    <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
 
     <style> 
     #wrap {
@@ -38,11 +31,31 @@
   #footer {
     background-color: black;
     color: white;
+    z-index: -1;
   }
 
     .food-search {
       font-size: 2em;
       height: 2em;
+    }
+
+    .ui-autocomplete {
+      max-height: 16em;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .ui-autocomplete .f-name {
+      margin-right: 1em;
+      font-weight: bold;
+    }
+
+    .ui-autocomplete .f-cals {
+      display: block;
+      font-size: 0.85em;
+    }
+    .ui-autocomplete .f-serving {
+      float: right;
     }
   </style>
 
@@ -65,12 +78,52 @@
         $.getJSON(url, {
           appKey: "15f569293b8b19abdd0cd7f91d29fbd7",
           appId: "bc975dc3",
-          results: "0:9",
-          phrase: request.term
-        })
-      }
-    });
+          fields: "item_name,item_id,nf_serving_size_qty,nf_serving_size_unit,nf_calories,nf_total_fat,nf_total_carbohydrate,nf_protein",
+          results: "0:9"
+        }, function(data) {
+         var array = data.error ? [] : $.map(data.hits, function(f) {
+          console.log(data);
+          console.log(f);
+          console.log(data.hits);
+          return {
+            label: f.fields.item_name,
+            id_food: f.fields.item_id,
+            serving_size_qty: f.fields.nf_serving_size_qty,
+            serving_size_unit: f.fields.nf_serving_size_unit,
+            calories: f.fields.nf_calories,
+            fat: f.fields.nf_total_fat,
+            carbs: f.fields.nf_total_carbohydrate,
+            protein: f.fields.nf_protein
+          };
+        });
+        response(array);
+      });
+      },focus: function(event, ui) {
+          // prevent autocomplete from updating the textbox
+          event.preventDefault();
+        },
+        select: function(event, ui) {
+          // prevent autocomplete from updating the textbox
+          event.preventDefault();
+          // add to field
+        }
+    }).data("ui-autocomplete")._renderItem = function(ul, item) {
+      console.log(item);
+      var $a = $("<a></a>");
+        $("<span class='f-name'></span>").text(item.label).appendTo($a);
+        var qty = item.serving_size_qty;
+        var unit = item.serving_size_unit;
+        var serving = qty.toString() + ' ' + unit;
+        $("<span class='f-serving'></span>").text(serving).appendTo($a);
+        $("<span class='f-cals'></span>").text(item.calories.toString() + " calories").appendTo($a);
+        $("<span class='f-cals'></span>").text(item.fat.toString() + " g total fat").appendTo($a);
+        $("<span class='f-cals'></span>").text(item.carbs.toString() + " g carbohydrates").appendTo($a);
+        $("<span class='f-cals'></span>").text(item.protein.toString() + " g protein").appendTo($a);
+        return $("<li></li>").append($a).appendTo(ul);
+    };
   });
+
+  
 
   </script>
 
@@ -134,7 +187,7 @@
 		    <tbody>
 		      <tr>
 		        <!--<td>1</td>-->
-		        <td><input name="name" type="text"></td>
+		        <td><input  name="name" type="text"></td>
             <td><input name="servingsize" type="number" min="1"></td>
 		        <td><input name="calories" type="number"min="1"></td>
             <td><input name="fat" type="number"min="1">g</td>
@@ -147,13 +200,6 @@
           <button type="submit" class="btn btn-success">Save</button>
           </form>
 		 </div>
-
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="../../dist/js/bootstrap.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
 
     <script>
       function addFood() {
