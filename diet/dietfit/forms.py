@@ -15,4 +15,4 @@ class RegistrationForm(ModelForm):
 class FoodForm(ModelForm):
 	class Meta:
 		model = Food
-		fields = ['name', 'calories', 'fat', 'carbs', 'protein']
+		fields = ['name', 'calories', 'fat', 'carbs', 'protein', 'servingsize']

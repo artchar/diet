@@ -25,11 +25,11 @@ def validate_positive(value):
 
 class Food(models.Model):
 	name = models.CharField(max_length = 30, default="food")
-	calories = models.FloatField(validators=[validate_positive])
-	fat = models.FloatField(validators=[validate_positive])
-	carbs = models.FloatField(validators=[validate_positive])
-	protein = models.FloatField(validators=[validate_positive])
-	servingsize = models.IntegerField(validators=[validate_positive], default=1)
+	calories = models.DecimalField(validators=[validate_positive], decimal_places=2, max_digits=10)
+	fat = models.DecimalField(validators=[validate_positive], decimal_places=2, max_digits=10)
+	carbs = models.DecimalField(validators=[validate_positive], decimal_places=2, max_digits=10)
+	protein = models.DecimalField(validators=[validate_positive], decimal_places=2, max_digits=10)
+	servingsize = models.CharField(default="1 serving", max_length=15)
 	ourfood = models.BooleanField(default=False)
 
 	def __str__(self):
@@ -92,7 +92,7 @@ class MealPlan(models.Model):
 
 # class Exercise(models.Model):
 # 	name = models.CharField(max_length=40)
-# 	calories_burned = models.FloatField(validators=[validate_positive])
+# 	calories_burned = models.DecimalField(validators=[validate_positive])
 
 # 	def __str__(self):
 # 		return self.name

@@ -18,7 +18,7 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
     <link href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/ui-darkness/jquery-ui.min.css" rel="stylesheet">
 
-    <style> 
+  <style> 
     #wrap {
     min-height: 100%;
     height: auto;
@@ -82,9 +82,6 @@
           results: "0:9"
         }, function(data) {
          var array = data.error ? [] : $.map(data.hits, function(f) {
-          console.log(data);
-          console.log(f);
-          console.log(data.hits);
           return {
             label: f.fields.item_name,
             id_food: f.fields.item_id,
@@ -108,7 +105,6 @@
           // add to field
         }
     }).data("ui-autocomplete")._renderItem = function(ul, item) {
-      console.log(item);
       var $a = $("<a></a>");
         $("<span class='f-name'></span>").text(item.label).appendTo($a);
         var qty = item.serving_size_qty;

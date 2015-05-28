@@ -16,13 +16,10 @@
 
     <!-- Bootstrap core CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+    <link href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/ui-darkness/jquery-ui.min.css" rel="stylesheet">
 
-    <!-- Custom styles for this template -->
-    <link href="starter-template.css" rel="stylesheet">
-
-    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-    <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
 
     <style> 
     #wrap {
@@ -38,6 +35,35 @@
 		background-color: black;
 		color: white;
 	}
+
+      .food-search {
+      font-size: 2em;
+      height: 2em;
+      margin-bottom:3px;
+    }
+
+    .ui-autocomplete {
+      max-height: 16em;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .ui-autocomplete .f-name {
+      margin-right: 1em;
+      font-weight: bold;
+    }
+
+    .ui-autocomplete .f-cals {
+      display: block;
+      font-size: 0.85em;
+    }
+    .ui-autocomplete .f-serving {
+      float: right;
+    }
+
+    .foot {
+      margin-top: 5px;
+    }
 	</style>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -48,6 +74,81 @@
   </head>
 
   <body>
+      <script>
+      var food_searched = false;
+      var orig_serving = 0;
+      var orig_calories = 0;
+      var orig_fat = 0;
+      var orig_carbs = 0;
+      var orig_protein = 0;
+      $(function() {
+        $("#search_food").autocomplete({
+          minLength: 3,
+          delay: 500,
+          source: function(request, response) {
+            var url = "https://api.nutritionix.com/v1_1/search/" + request.term;
+            $.getJSON(url, {
+              appKey: "15f569293b8b19abdd0cd7f91d29fbd7",
+              appId: "bc975dc3",
+              fields: "item_name,item_id,nf_serving_size_qty,nf_serving_size_unit,nf_calories,nf_total_fat,nf_total_carbohydrate,nf_protein",
+              results: "0:9"
+            }, function(data) {
+             var array = data.error ? [] : $.map(data.hits, function(f) {
+              return {
+                label: f.fields.item_name,
+                id_food: f.fields.item_id,
+                serving_size_qty: f.fields.nf_serving_size_qty,
+                serving_size_unit: f.fields.nf_serving_size_unit,
+                calories: f.fields.nf_calories,
+                fat: f.fields.nf_total_fat,
+                carbs: f.fields.nf_total_carbohydrate,
+                protein: f.fields.nf_protein
+              };
+            });
+            response(array);
+          });
+          },focus: function(event, ui) {
+              // prevent autocomplete from updating the textbox
+              event.preventDefault();
+            },
+            select: function(event, ui) {
+              // prevent autocomplete from updating the textbox
+              event.preventDefault();
+              // add to field
+              $("#servingunit").after().remove();
+              $("#foodname").val(ui.item.label);
+              $("#foodservingsize").val(ui.item.serving_size_qty);
+              $("#foodaddcals").val(ui.item.calories);
+              $("#foodaddfat").val(ui.item.fat);
+              $("#foodaddcarbs").val(ui.item.carbs);
+              $("#foodaddprotein").val(ui.item.protein);
+              $("#servingunit").val(ui.item.serving_size_unit+'(s)');
+              $("#servingunit").after(ui.item.serving_size_unit);
+
+              window.orig_serving = parseFloat($("#foodservingsize").val());
+              window.orig_calories = parseFloat($("#foodaddcals").val());
+              window.orig_fat = parseFloat($("#foodaddfat").val());
+              window.orig_carbs = parseFloat($("#foodaddcarbs").val());
+              window.orig_protein = parseFloat($("#foodaddprotein").val());
+              window.food_searched = true;
+            }
+
+        }).data("ui-autocomplete")._renderItem = function(ul, item) {
+          var $a = $("<a></a>");
+            $("<span class='f-name'></span>").text(item.label).appendTo($a);
+            var qty = item.serving_size_qty;
+            var unit = item.serving_size_unit;
+            var serving = qty.toString() + ' ' + unit;
+            $("<span class='f-serving'></span>").text(serving).appendTo($a);
+            $("<span class='f-cals'></span>").text(item.calories.toString() + " calories").appendTo($a);
+            $("<span class='f-cals'></span>").text(item.fat.toString() + " g total fat").appendTo($a);
+            $("<span class='f-cals'></span>").text(item.carbs.toString() + " g carbohydrates").appendTo($a);
+            $("<span class='f-cals'></span>").text(item.protein.toString() + " g protein").appendTo($a);
+            return $("<li></li>").append($a).appendTo(ul);
+        };
+      });
+  </script>
+
 
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
@@ -71,8 +172,31 @@
     </nav>
     <br>
     <br>
-    <br>
-    <br>
+
+    <script>
+    $(document).ready(function() {
+      $("#add_food_toggle").click(function() {
+        $(".add_food").toggle();
+      });
+    });
+
+    $(document).ready(function() {
+      $("#foodservingsize").keyup(function() {
+        console.log("keyup");
+          if(food_searched) {
+              if (parseFloat($("#foodservingsize").val()) >= 0) {
+                var serving = $("#foodservingsize").val()/window.orig_serving;
+                $("#foodaddcals").val(window.orig_calories*serving);
+                $("#foodaddfat").val(window.orig_fat*serving);
+                $("#foodaddcarbs").val(window.orig_carbs*serving);
+                $("#foodaddprotein").val(window.orig_protein*serving);
+              }
+          }
+          });
+    });
+    </script>
+
+
     <div class="container">
 
     	<h1>Welcome {{user.username}}</h1>
@@ -81,12 +205,48 @@
     	<h3>You should be aiming for <b>{{user.userprofile.calorie_goal}}</b> calories to lose {{user.userprofile.loss_goal}} lbs a week.</h3>
 
     	<div class="btn-group" role="group" aria-label="...">
-		  <a href="/addmeal" type="button" class="btn btn-lg btn-primary">Add a meal</a>
+		  <button type="button" class="btn btn-lg btn-primary" id="add_food_toggle">Add a meal</button>
 		  <a href="/generate" type="button" class="btn btn-lg btn-primary">Generate meals</a>
 		  <a href="/resetfood" type="button" class="btn btn-lg btn-danger">Reset</a>
-		</div>
+		  </div>
 
-    </div><!-- /.container -->
+    </div>
+
+
+    <br>
+
+    <div class="container add_food" id="add_food">
+    <input class="form-control food-search" placeholder="Search for a food.." id="search_food">
+      <form method="post" action="/mealadded/"> {% csrf_token %}
+      <table id="foods" class="table table-bordered">
+        <thead>
+          <tr>
+           <!-- <th>Food</th> -->
+
+            <th>Name</th>
+            <th>Servings</th>
+            <th>Calories</th>
+            <th>Fat</th>
+            <th>Carbs</th>
+            <th>Protein</th>            
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <!--<td>1</td>-->
+            <td><input name="name" id="foodname" type="text"></td>
+            <td><input name="servingsize" id="foodservingsize" type="number" step="any" min="0.1"><input name="servingunit"id="servingunit" type=hidden></td>
+            <td><input name="calories" id="foodaddcals" type="number" step="any" min="1"></td>
+            <td><input name="fat" id="foodaddfat" type="number" step="any" min="0">g</td>
+            <td><input name="carbs" id="foodaddcarbs" type="number" step="any" min="0">g</td>
+            <td><input name="protein" id="foodaddprotein" type="number" step="any" min="0">g</td>
+          </tr>
+          
+        </tbody>
+      </table>
+          <button type="submit" class="btn btn-success">Save</button>
+          </form>
+     </div>
 
     <div class="container">
     	<h2>Food</h2>        
@@ -140,25 +300,20 @@
 		
 
     <footer id="footer">
-    <nav class="navbar navbar-inverse navbar-fixed-bottom">
-      <div class="container">
+    <nav class="navbar navbar-inverse navbar-fixed-bottom foot">
+        <div class="container">
         {% if user.userprofile.deficit < 0 %}
 		<h3>You have eaten <strong>{{user.userprofile.deficit|abs}}</strong> more calories than your goal!</h3>
 		{% else %}
 		<h3>You have eaten <strong>{{user.userprofile.deficit}}</strong> less calories than your goal!</h3>
 		{% endif %}
-      </div>
+    </div>
       </nav>
     </footer>
-
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script src="../../dist/js/bootstrap.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
   </body>
 </html>
 
