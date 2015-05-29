@@ -57,7 +57,8 @@ def register(request):
 			mealplanobj = MealPlan.objects.create(owner = request.POST['username'])
 			mealplanobj.save()
 			exerciseplanobj = ExercisePlan.objects.create(owner= request.POST['username'])
-			userprofile = UserProfile.objects.create(mealplan=mealplanobj, calorie_goal=calories, user=useracc, age=request.POST['age'], gender=request.POST['gender'], height_ft=request.POST['height_ft'], height_inch=request.POST['height_inch'], weight=request.POST['weight'], loss_goal=request.POST['loss_goal'], exerciseplan=exerciseplanobj)
+			weightplan = WeightPlan.objects.create(owner=request.POST['username'])
+			userprofile = UserProfile.objects.create(mealplan=mealplanobj, calorie_goal=calories, user=useracc, age=request.POST['age'], gender=request.POST['gender'], height_ft=request.POST['height_ft'], height_inch=request.POST['height_inch'], weight=request.POST['weight'], loss_goal=request.POST['loss_goal'], weightplan=weightplan, exerciseplan=exerciseplanobj)
 			userprofile.save()
 		return HttpResponseRedirect('/register_success')
 	else:
@@ -92,14 +93,10 @@ def addmeal(request):
 
 def mealadded_view(request):
 	if request.method == 'POST':
-		foodform = FoodForm(request.POST)
-		if foodform.is_valid():
 			serving = str(request.POST['servingsize'] + ' ' + request.POST['servingunit'])
 			newfood = Food.objects.create(ourfood=False, name=request.POST['name'], calories=request.POST['calories'], fat=request.POST['fat'], carbs=request.POST['carbs'], protein=request.POST['protein'], servingsize=serving)
 			newfood.save()
 			request.user.userprofile.mealplan.foods.add(newfood)
-			return HttpResponseRedirect("/home")
-		else:
 			return HttpResponseRedirect("/home")
 
 def exerciseadded_view(request):
@@ -109,15 +106,22 @@ def exerciseadded_view(request):
 	request.user.userprofile.exerciseplan.exercises.add(new_user_exercise)
 	return HttpResponseRedirect("/home")
 
+def weightadded_view(request):
+	if request.method == 'POST':
+		weightform = WeightExerciseForm(request.POST)
+		if weightform.is_valid():
+			newweight = WeightExercise.objects.create(name=request.POST['name'], weight=request.POST['weight'], reps=request.POST['reps'], sets=request.POST['sets'])
+			request.user.userprofile.weightplan.weightExercises.add(newweight)
+		return HttpResponseRedirect("/home")
 
 def generate_view(request):
 	deficit = request.user.userprofile.deficit
-	ourfoods = Food.objects.filter(ourfood=True)
-	while deficit > 0:
-	 	rand = int(random.random()*len(ourfoods))
-	 	if deficit - ourfoods[rand].calories > -150:
-	 		request.user.userprofile.mealplan.foods.add(ourfoods[rand])
-	 		deficit = deficit - ourfoods[rand].calories
+	ourfoods = Food.objects.filter(ourfood2=True)
+	for x in ourfoods:
+		while deficit > 140:
+		 	if deficit - x.calories > -150:
+		 		request.user.userprofile.mealplan.foods.add(x)
+		 		deficit = deficit - x.calories
 	return HttpResponseRedirect("/home")
 
 def reset_food(request):
@@ -128,8 +132,31 @@ def reset_food(request):
 	request.user.userprofile.save()
 	return HttpResponseRedirect("/home")
 	
-# def reset_exercise(request):
-# 	request.user.userprofile.exerciseplan.delete()
-# 	exerciseplanobj = ExercisePlan.objects.create(owner = request.user.username)
-# 	exerciseplanobj.save()
-# 	request.user.userprofile.exerciseplan
+def reset_exercise(request):
+	request.user.userprofile.exerciseplan.delete()
+	exerciseplanobj = ExercisePlan.objects.create(owner = request.user.username)
+	exerciseplanobj.save()
+	request.user.userprofile.exerciseplan = exerciseplanobj
+	request.user.userprofile.save()
+	return HttpResponseRedirect("/home")
+
+def changeminutes(request):
+	request.user.userprofile.weightplan.workout_time = request.POST['newminutes']
+	request.user.userprofile.weightplan.save()
+	return HttpResponseRedirect("/home")
+
+def changeintensity(request):
+	if request.POST['changeintensity'] == 'High':
+		request.user.userprofile.weightplan.high_intensity = True
+	else:
+		request.user.userprofile.weightplan.high_intensity = False
+	request.user.userprofile.weightplan.save()
+	return HttpResponseRedirect("/home")
+
+def reset_weight(request):
+	request.user.userprofile.weightplan.delete()
+	weightplanobj = WeightPlan.objects.create(owner=request.user.username)
+	weightplanobj.save()
+	request.user.userprofile.weightplan = weightplanobj
+	request.user.userprofile.save()
+	return HttpResponseRedirect("/home")

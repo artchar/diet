@@ -21,6 +21,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
 
+    <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+
     <style> 
     #wrap {
     min-height: 100%;
@@ -41,6 +43,13 @@
     margin-bottom:1em;
   }
 
+  .edit {
+    width:5px;
+  }
+  .add_weight {
+    margin-top:1em;
+    margin-bottom:1em;
+  }
   .add_exercise {
     margin-top:1em;
     margin-bottom:1em;
@@ -196,12 +205,22 @@
     $(document).ready(function() {
       $("#add_food").hide();
       $("#add_exercise").hide();
+      $("#add_weight").hide();
+      $(".editminutes").hide();
+      $(".editintensity").hide();
+      $(".food-total-container").hide();
+      $(".weight-container").hide();
+      $(".exercise-container").hide();
 
       $("#add_food_toggle").click(function() {
         $(".add_food").slideToggle("slow");
       });
        $("#add_exercise_toggle").click(function() {
         $(".add_exercise").slideToggle("slow");
+      });
+
+       $("#add_weight_toggle").click(function() {
+        $(".add_weight").slideToggle("slow");
       });
 
       $("#foodtoggle").click(function() {
@@ -215,10 +234,20 @@
       $("#exercisetoggle").click(function() {
         $(".exercise-container").slideToggle("fast");
       });
+      $("#weighttoggle").click(function() {
+        $(".weight-container").slideToggle("slow");
+      });
+      $("#editminutestoggle").click(function() {
+        $(".editminutes").toggle();
+      });
+      $("#editintensitytoggle").click(function() {
+        $(".editintensity").toggle();
+      });
 
     });
 
     $(document).ready(function() {
+
       $("#foodservingsize").keyup(function() {
         console.log("keyup");
           if(food_searched) {
@@ -236,6 +265,7 @@
         $("#selectedexercise").text($("#search_exercise option:selected")[0].text);
         $("#exerciseid").val($("#search_exercise option:selected")[0].value);
       });
+
     });
     </script>
 
@@ -349,10 +379,22 @@
             <td><center><h2>{{user.userprofile.mealplan.totalcarbs}}</h2></center></td>
             <td><center><h2>{{user.userprofile.mealplan.totalprotein}}</h2></center></td>
           </tr>
+          <tr>
+            <td><center>{% if user.userprofile.deficit < 0 %}<p style="color:red">You are above your recommended daily calorie intake.{% else %}<p style="color:green"> You still have calories left to eat! {% endif %}
+</p></center></td>
+            <td><center>{% if user.userprofile.fat_recommendation %}<p style="color:red"> are above your recommended daily fat intake. Consider reducing your fat intake in the future.{% else %}<p style="color:green"> Your fat intake is in a healthy range! {% endif %}
+</p></center></td>
+            <td><center>{% if user.userprofile.carb_recommendation %}<p style="color:red">You are above your recommended daily carb intake. Consider reducing your carb intake in the future.{% else %}<p style="color:green"> Your carb intake is in a healthy range! {% endif %}
+</p></center></td>
+            <td><center>{% if user.userprofile.protein_recommendation %}<p style="color:red">You are below your recommended daily protein intake. Consider increasing your protein intake in the future.{% else %}<p style="color:green"> Your protein intake is in a healthy range! {% endif %}
+</p></center></td>
+          </tr>
         </tbody>
       </table>
   </div>
   </div>
+
+
 
   <div class="container">
   <hr>
@@ -426,8 +468,97 @@
    </div>
   </div>
 
+
+  <div class="container">
+      <h3>Weight Exercises<span class="glyphicon glyphicon-minus section-minimize minus" id="weighttoggle" aria-hidden="true"></h3>        
+      </div>
+
+  <div class="weight-container">
    <div class="container">
-    <h3> Exercises burn a total of <strong>{{user.userprofile.cals_from_exercise|floatformat:"2"}}</strong> calories. This is added to your allowed calories for the day.</h3>
+
+        <div class="btn-group btns" role="group" aria-label="...">
+        <button type="button" class="btn btn-lg btn-primary" id="add_weight_toggle">Add weight exercise</button>
+        <a href="/resetweight" type="button" class="btn btn-lg btn-danger">Reset weight exercises</a>
+        </div>
+   </div>
+    <div class="container add_weight" id="add_weight">
+
+      <form method="post" action="/weightadded/"> {% csrf_token %}
+      <table id="exercises" class="table table-bordered">
+        <thead>
+          <tr>
+           <!-- <th>Food</th> -->
+            <th>Exercise Name</th>
+            <th>Weight</th>  
+            <th>Reps</th> 
+            <th>Sets</th>          
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <!--<td>1</td>-->
+            <td><input class="form-control" name="name" id="weightname" type="text"></td>
+            <td><input class="form-control" name="weight" id="weightamount" type="number" min="20"></td>
+            <td><input class="form-control" name="reps" id="weightreps" type="number" min="1"></td>
+            <td><input class="form-control" name="sets" id="weightsets" type="number" min="1"></td>
+          </tr>
+        </tbody>
+      </table>
+          <button type="submit" class="btn btn-success">Save</button>
+          </form>
+     </div>
+
+     <div class="container">
+     <div class="row">
+      <div class="col-md-6">
+        <h2>Minutes: <strong>{{user.userprofile.weightplan.workout_time}}</strong><button type="button" class= "btn btn-sm btn-success" id="editminutestoggle">Edit</button></h2>
+        <div class="editminutes">
+        <form method="post" action="/changeminutes/"> {% csrf_token %}
+          <input type="number" name="newminutes">
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <h2>Intensity: <strong>{{user.userprofile.weightplan.intensity}}<button type="button" class= "btn btn-sm btn-success" id="editintensitytoggle">Edit</button></strong></h2>
+        <div class="editintensity">
+        <form id="changeintensity" method="post" action="/changeintensity/"> {% csrf_token %}
+          <select name="changeintensity">
+            <option value="High">High</option>
+            <option value="Moderate">Moderate</option>
+            </select>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        </div>
+      </div>
+        </div>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Weight</th>
+            <th>Reps</th>
+            <th>Sets</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for we in user.userprofile.weightplan.weightExercises.all %}
+          <tr>
+            <td><center>{{we.name}}</center></td>
+            <td><center>{{we.weight}}</center></td>
+            <td><center>{{we.reps}}</center></td>
+            <td><center>{{we.sets}}</center></td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+   </div>
+   </div>
+  </div>
+
+   <div class="container">
+    <h3>Your Cardio Exercises burn a total of <strong>{{user.userprofile.cals_from_exercise|floatformat:"2"}}</strong> calories. </h3>
+     <h3>You Weight Exercises burn a total of <strong>{{user.userprofile.cals_from_weights|floatformat:"2"}}</strong> calories.</h3>
 
     </div>
     
@@ -435,11 +566,16 @@
     <footer id="footer">
     <nav class="navbar navbar-inverse navbar-fixed-bottom foot">
         <div class="container">
-        {% if user.userprofile.deficit < 0 %}
-    <h3>You have <strong>{{user.userprofile.deficit|abs}}</strong> more calories than your goal!</h3>
-    {% else %}
-    <h3>You have <strong>{{user.userprofile.deficit}}</strong> less calories than your goal!</h3>
-    {% endif %}
+          {% if user.userprofile.deficit < -100 %}
+            <h3>You have <strong>{{user.userprofile.deficit|abs}}</strong> more calories than your goal! Moderately jog for about <strong>{{user.userprofile.running_needed}}</strong> minutes to make up for it.</h3>
+          {% elif user.userprofile.deficit < 0 %}
+      <h3>You have <strong>{{user.userprofile.deficit|abs}}</strong> more calories than your goal! Close enough for the day. You should stop eating.</h3>
+      {% elif user.userprofile.deficit > 350 %}
+      <h3>You have <strong>{{user.userprofile.deficit}}</strong> less calories than your goal! You should still eat some more today.</h3>
+      {% elif user.userprofile.deficit > 100 %}
+      <h3>You have <strong>{{user.userprofile.deficit}}</strong> less calories than your goal! Stop eating soon.</h3>
+
+      {% endif %}
     </div>
       </nav>
     </footer>

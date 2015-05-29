@@ -17,3 +17,7 @@ class FoodForm(ModelForm):
 		model = Food
 		fields = ['name', 'calories', 'fat', 'carbs', 'protein', 'servingsize']
 
+class WeightExerciseForm(ModelForm):
+	class Meta:
+		model = WeightExercise
+		fields = ['name', 'weight', 'reps', 'sets']

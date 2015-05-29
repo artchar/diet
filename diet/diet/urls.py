@@ -29,7 +29,13 @@ urlpatterns = [
     url(r'^mealadded/', mealadded_view),
     url(r'^generate/', generate_view),
     url(r'^resetfood/', reset_food),
-    url(r'^exerciseadded/', exerciseadded_view)
+    url(r'^exerciseadded/', exerciseadded_view),
+    url(r'^weightadded/', weightadded_view),
+    url(r'^resetexercise/', reset_exercise),
+    url(r'^changeminutes/', changeminutes),
+    url(r'^changeintensity/', changeintensity),
+    url(r'^resetweight/', reset_weight)
+
     #url(r'^resetexercise/', reset_exercise)
 
 ]

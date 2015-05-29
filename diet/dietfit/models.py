@@ -31,6 +31,7 @@ class Food(models.Model):
 	protein = models.DecimalField(validators=[validate_positive], decimal_places=2, max_digits=10)
 	servingsize = models.CharField(default="1 serving", max_length=15)
 	ourfood = models.BooleanField(default=False)
+	ourfood2 = models.BooleanField(default=False)
 
 	def __str__(self):
 		return self.name
@@ -105,12 +106,38 @@ class ExercisePlan(models.Model):
 	exercises = models.ManyToManyField(UserExercise, unique=False)
 	owner = models.CharField(max_length=14, default="")
 
+
 	def __str__(self):
 		return "exercise plan of " + self.owner
 
 
+class WeightExercise(models.Model):
+	name = models.CharField(max_length=14, default= "weight exercise")
+	weight = models.IntegerField(validators=[validate_positive], default=0)
+	reps = models.IntegerField(validators=[validate_positive], default=0)
+	sets = models.IntegerField(validators=[validate_positive], default=0)
+
+	def __str__(self):
+		return self.name
+
+class WeightPlan(models.Model):
+	weightExercises = models.ManyToManyField(WeightExercise, unique=False, null=True)
+	owner = models.CharField(max_length=14, default="")
+	workout_time = models.IntegerField(validators=[validate_positive], default=0)
+	high_intensity = models.BooleanField(default=False)
+
+	def __str__(self):
+		return "weight plan of " + self.owner
+
+	@property
+	def intensity(self):
+	    if self.high_intensity:
+	    	return "High"
+	    else:
+	    	return "Moderate"
 
 
+	
 
 
 class UserProfile(models.Model):
@@ -128,6 +155,13 @@ class UserProfile(models.Model):
 	mealplan = models.OneToOneField(MealPlan)
 	exerciseplan = models.OneToOneField(ExercisePlan, null=True)
 	loss_goal = models.IntegerField(validators=[validate_positive], default=0)
+	weightplan = models.OneToOneField(WeightPlan, null=True)
+
+
+	@property
+	def cals_from_weights(self):
+		return 0.023765 * self.weightplan.workout_time * self.weight
+
 
 
 	@property
@@ -141,8 +175,45 @@ class UserProfile(models.Model):
 
 	@property
 	def deficit(self):
-		return int(self.calorie_goal - self.mealplan.totalcals + int(self.cals_from_exercise))
+		return int(self.calorie_goal - self.mealplan.totalcals + int(self.cals_from_exercise) + int(self.cals_from_weights))
 
+	@property
+	def running_needed(self):
+		if (self.deficit < 50):
+			run = ExerciseBase.objects.get(id=9)
+			met = run.met
+			return int(float(self.deficit*-1)/(float(met) * 3.5 * ((float(self.weight)/2.2046)/200)))
+		else:
+			return 0
+
+	@property
+	def fat_recommendation(self):
+		fat = self.mealplan.totalfat
+		if fat > 75:
+		    return True
+
+		else:
+		    return False
+
+
+	@property
+	def carbs_recommendation(self):
+		carbs = self.mealplan.totalcarbs
+		if carbs > 310:
+		    return True
+		else:
+		    return False
+
+
+	@property
+	def protein_recommendation(self):
+		protein = self.mealplan.totalprotein
+		if protein < 50:
+		    return "You are below your recommended daily protein intake. Consider eating one of our 'recommended' meals to reach your protein goal."
+		    return True
+		else:
+			return False
+			return "Your protein intake is within a healthy range!"
 
 
 
