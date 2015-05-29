@@ -208,9 +208,6 @@
       $("#add_weight").hide();
       $(".editminutes").hide();
       $(".editintensity").hide();
-      $(".food-total-container").hide();
-      $(".weight-container").hide();
-      $(".exercise-container").hide();
 
       $("#add_food_toggle").click(function() {
         $(".add_food").slideToggle("slow");
@@ -380,11 +377,11 @@
             <td><center><h2>{{user.userprofile.mealplan.totalprotein}}</h2></center></td>
           </tr>
           <tr>
-            <td><center>{% if user.userprofile.deficit < 0 %}<p style="color:red">You are above your recommended daily calorie intake.{% else %}<p style="color:green"> You still have calories left to eat! {% endif %}
+            <td><center><p>
 </p></center></td>
-            <td><center>{% if user.userprofile.fat_recommendation %}<p style="color:red"> are above your recommended daily fat intake. Consider reducing your fat intake in the future.{% else %}<p style="color:green"> Your fat intake is in a healthy range! {% endif %}
+            <td><center>{% if user.userprofile.fat_recommendation %}<p style="color:red">You are above your recommended daily fat intake. Consider reducing your fat intake in the future.{% else %}<p style="color:green"> Your fat intake is in a healthy range! {% endif %}
 </p></center></td>
-            <td><center>{% if user.userprofile.carb_recommendation %}<p style="color:red">You are above your recommended daily carb intake. Consider reducing your carb intake in the future.{% else %}<p style="color:green"> Your carb intake is in a healthy range! {% endif %}
+            <td><center>{% if user.userprofile.carbs_recommendation %}<p style="color:red">You are above your recommended daily carb intake. Consider reducing your carb intake in the future.{% else %}<p style="color:green"> Your carb intake is in a healthy range! {% endif %}
 </p></center></td>
             <td><center>{% if user.userprofile.protein_recommendation %}<p style="color:red">You are below your recommended daily protein intake. Consider increasing your protein intake in the future.{% else %}<p style="color:green"> Your protein intake is in a healthy range! {% endif %}
 </p></center></td>
