@@ -14,3 +14,5 @@ $ cd diet
 $ python manage.py runserver
 
 Open browser, go to http://127.0.0.1:8000/
+
+https://www.youtube.com/watch?v=5L2GzlkBJEg
